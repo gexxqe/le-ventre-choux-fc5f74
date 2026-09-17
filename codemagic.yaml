@@ -8,26 +8,23 @@ workflows:
       xcode: latest
 
     scripts:
+      - name: Install XcodeGen
+        script: |
+          brew install xcodegen
+
+      - name: Generate Xcode project
+        script: |
+          cd "$CM_BUILD_DIR/ios"
+          xcodegen generate
+          ls -la
+
       - name: Build iOS
         script: |
-          echo "NEW SCRIPT ACTIVE"
-          echo "Current directory:"
-          pwd
-
-          echo "Searching for Xcode projects:"
-          find "$CM_BUILD_DIR" -maxdepth 5 -name "*.xcodeproj" -print
-
-          PROJECT=$(find "$CM_BUILD_DIR" -name "*.xcodeproj" -type d | head -n 1)
+          PROJECT=$(find "$CM_BUILD_DIR/ios" -name "*.xcodeproj" -type d | head -n 1)
 
           echo "Xcode project found:"
           echo "$PROJECT"
 
-          if [ -z "$PROJECT" ]; then
-            echo "ERROR: No .xcodeproj found in repository"
-            exit 1
-          fi
-
-          echo "Available schemes:"
           xcodebuild -project "$PROJECT" -list
 
           xcodebuild build \
