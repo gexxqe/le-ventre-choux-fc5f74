@@ -53,7 +53,7 @@ jobs:
           else:
               html = re.sub(r'<script src="\./public-fixes\.js(?:\?v=[^"]*)?"></script>', fixes_tag, html)
 
-          badge_tag = '<script src="./hero-badge.js?v=20260917-1"></script>'
+          badge_tag = '<script src="./hero-badge.js?v=20260917-2"></script>'
           if 'hero-badge.js' not in html:
               html = html.replace('</body>', f'{badge_tag}\n</body>')
           else:
