@@ -8,11 +8,9 @@
       const saveButton = row.querySelector('button[onclick^="saveDish("]');
       const deleteButton = row.querySelector('button.danger');
       if (!saveButton || !deleteButton) return;
-
       const match = (saveButton.getAttribute('onclick') || '').match(/saveDish\('([^']+)'\)/);
       if (!match) return;
       const id = match[1];
-
       deleteButton.removeAttribute('onclick');
       deleteButton.onclick = async () => {
         if (!confirm('Supprimer ce plat de la carte ?')) return;
@@ -27,11 +25,9 @@
     const text = String(value || '').trim();
     if (!text) return { start: null, end: null, closed: false };
     if (/^ferm[eé]$/i.test(text)) return { start: null, end: null, closed: true };
-
     const normalized = text.replace(/[–—]/g, '-').replace(/\s+/g, '');
     const match = normalized.match(/^(\d{1,2}:\d{2})-(\d{1,2}:\d{2})$/);
     if (!match) throw new Error(`Format invalide : ${text}. Utilise par exemple 12:00-14:00 ou Fermé.`);
-
     const validTime = t => {
       const [h, m] = t.split(':').map(Number);
       return h >= 0 && h <= 23 && m >= 0 && m <= 59;
@@ -43,22 +39,18 @@
   function wireHoursSave() {
     const button = document.getElementById('saveHours');
     if (!button) return;
-
     button.onclick = async () => {
       const original = button.textContent;
       button.disabled = true;
       button.textContent = 'Enregistrement…';
-
       try {
         for (let i = 0; i < 7; i++) {
           const lunchInput = document.getElementById('hl_' + i);
           const dinnerInput = document.getElementById('hd_' + i);
           if (!lunchInput || !dinnerInput) continue;
-
           const lunch = parseSlot(lunchInput.value);
           const dinner = parseSlot(dinnerInput.value);
           const fullyClosed = lunch.closed && dinner.closed;
-
           const payload = {
             is_closed: fullyClosed,
             lunch_start: lunch.closed ? null : lunch.start,
@@ -66,11 +58,9 @@
             dinner_start: dinner.closed ? null : dinner.start,
             dinner_end: dinner.closed ? null : dinner.end
           };
-
           const { error } = await db.from('opening_hours').update(payload).eq('day_index', i);
           if (error) throw new Error(`${lunchInput.closest('.row')?.querySelector('b')?.textContent || 'Jour ' + i}: ${error.message}`);
         }
-
         alert('Horaires enregistrés ✅');
         await loadHours();
       } catch (error) {
@@ -80,6 +70,19 @@
         button.textContent = original;
       }
     };
+  }
+
+  function updateCropPreview() {
+    const img = document.getElementById('dailyPreview');
+    const x = document.getElementById('cropX');
+    const y = document.getElementById('cropY');
+    const z = document.getElementById('cropZoom');
+    if (!img || !x || !y || !z) return;
+    img.style.objectPosition = `${x.value}% ${y.value}%`;
+    img.style.transform = `scale(${Number(z.value)})`;
+    document.getElementById('cropXValue').textContent = `${x.value}%`;
+    document.getElementById('cropYValue').textContent = `${y.value}%`;
+    document.getElementById('cropZoomValue').textContent = `${Math.round(Number(z.value) * 100)}%`;
   }
 
   function ensureDailyMenuPanel() {
@@ -100,10 +103,19 @@
         <div class="field"><label>Photo du jour</label><input id="dailyPhoto" type="file" accept="image/jpeg,image/png,image/webp"></div>
       </div>
       <div class="field"><label>Description</label><textarea id="dailyDescription" rows="3"></textarea></div>
-      <div style="display:grid;grid-template-columns:minmax(220px,360px) 1fr;gap:18px;align-items:start;margin-top:14px">
+      <div style="display:grid;grid-template-columns:minmax(260px,390px) 1fr;gap:18px;align-items:start;margin-top:14px">
         <div>
-          <img id="dailyPreview" alt="Aperçu du menu du jour" style="display:none;width:100%;max-height:260px;object-fit:cover;border-radius:16px;border:1px solid var(--line)">
-          <div id="dailyNoPhoto" class="small">Aucune photo chargée pour le moment.</div>
+          <div id="dailyPreviewFrame" style="width:100%;aspect-ratio:1.95/1;overflow:hidden;border-radius:16px;border:1px solid var(--line);background:#eef1ed;position:relative">
+            <img id="dailyPreview" alt="Aperçu du menu du jour" style="display:none;width:100%;height:100%;object-fit:cover;object-position:50% 50%;transform:scale(1);transform-origin:center;transition:transform .12s ease">
+          </div>
+          <div id="dailyNoPhoto" class="small" style="margin-top:7px">Aucune photo chargée pour le moment.</div>
+          <div id="cropControls" style="display:none;margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff">
+            <strong style="display:block;margin-bottom:10px">Cadrage de la photo</strong>
+            <div class="field"><label>Gauche ↔ droite <span id="cropXValue">50%</span></label><input id="cropX" type="range" min="0" max="100" value="50"></div>
+            <div class="field"><label>Haut ↕ bas <span id="cropYValue">50%</span></label><input id="cropY" type="range" min="0" max="100" value="50"></div>
+            <div class="field"><label>Zoom <span id="cropZoomValue">100%</span></label><input id="cropZoom" type="range" min="1" max="2" step="0.05" value="1"></div>
+            <p class="small" style="margin-bottom:0">Le cadrage visible ici sera enregistré sur le site.</p>
+          </div>
         </div>
         <div>
           <div class="actions" style="margin-top:0">
@@ -117,13 +129,20 @@
 
     document.getElementById('saveDailyMenu').onclick = saveDailyMenu;
     document.getElementById('removeDailyPhoto').onclick = removeDailyPhoto;
+    ['cropX','cropY','cropZoom'].forEach(id => document.getElementById(id).addEventListener('input', updateCropPreview));
+
     document.getElementById('dailyPhoto').addEventListener('change', e => {
       const file = e.target.files?.[0];
       if (!file) return;
       const preview = document.getElementById('dailyPreview');
+      document.getElementById('cropX').value = '50';
+      document.getElementById('cropY').value = '50';
+      document.getElementById('cropZoom').value = '1';
       preview.src = URL.createObjectURL(file);
       preview.style.display = 'block';
       document.getElementById('dailyNoPhoto').style.display = 'none';
+      document.getElementById('cropControls').style.display = 'block';
+      updateCropPreview();
     });
   }
 
@@ -136,7 +155,6 @@
     ensureDailyMenuPanel();
     const title = document.getElementById('dailyTitle');
     if (!title) return;
-
     const { data, error } = await db.from('menu_items').select('*').eq('id', DAILY_MENU_ID).single();
     const msg = document.getElementById('dailyMenuMsg');
     if (error) {
@@ -144,31 +162,52 @@
       msg.textContent = error.message;
       return;
     }
-
     title.value = data.name || '';
     document.getElementById('dailyDescription').value = data.description || '';
     document.getElementById('dailyPrice').value = Number(data.price).toFixed(2);
-
     const preview = document.getElementById('dailyPreview');
     const noPhoto = document.getElementById('dailyNoPhoto');
-    preview.onload = () => { preview.style.display = 'block'; noPhoto.style.display = 'none'; };
+    preview.onload = () => {
+      preview.style.display = 'block';
+      preview.style.objectPosition = '50% 50%';
+      preview.style.transform = 'scale(1)';
+      noPhoto.style.display = 'none';
+    };
     preview.onerror = () => { preview.style.display = 'none'; noPhoto.style.display = 'block'; };
     preview.src = dailyPublicUrl();
   }
 
   async function imageToWebp(file) {
     const bitmap = await createImageBitmap(file);
-    const maxWidth = 1600;
-    const maxHeight = 1200;
-    const scale = Math.min(1, maxWidth / bitmap.width, maxHeight / bitmap.height);
+    const targetW = 1400;
+    const targetH = 720;
+    const targetAspect = targetW / targetH;
+    const imageAspect = bitmap.width / bitmap.height;
+    let baseW, baseH;
+    if (imageAspect > targetAspect) {
+      baseH = bitmap.height;
+      baseW = baseH * targetAspect;
+    } else {
+      baseW = bitmap.width;
+      baseH = baseW / targetAspect;
+    }
+
+    const zoom = Number(document.getElementById('cropZoom')?.value || 1);
+    const posX = Number(document.getElementById('cropX')?.value || 50) / 100;
+    const posY = Number(document.getElementById('cropY')?.value || 50) / 100;
+    const cropW = baseW / zoom;
+    const cropH = baseH / zoom;
+    const sx = (bitmap.width - cropW) * posX;
+    const sy = (bitmap.height - cropH) * posY;
+
     const canvas = document.createElement('canvas');
-    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    canvas.width = targetW;
+    canvas.height = targetH;
     const ctx = canvas.getContext('2d');
-    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(bitmap, sx, sy, cropW, cropH, 0, 0, targetW, targetH);
     bitmap.close?.();
     return await new Promise((resolve, reject) => {
-      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Impossible de préparer la photo.')), 'image/webp', 0.86);
+      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Impossible de préparer la photo.')), 'image/webp', 0.88);
     });
   }
 
@@ -180,13 +219,11 @@
     button.textContent = 'Enregistrement…';
     msg.className = 'small';
     msg.textContent = '';
-
     try {
       const name = document.getElementById('dailyTitle').value.trim();
       const description = document.getElementById('dailyDescription').value.trim();
       const price = Number(document.getElementById('dailyPrice').value);
       if (!name || !Number.isFinite(price) || price < 0) throw new Error('Titre ou prix invalide.');
-
       const { error: updateError } = await db.from('menu_items').update({
         name,
         description,
@@ -207,6 +244,7 @@
         });
         if (uploadError) throw uploadError;
         document.getElementById('dailyPhoto').value = '';
+        document.getElementById('cropControls').style.display = 'none';
       }
 
       msg.className = 'ok';
@@ -235,6 +273,7 @@
     msg.textContent = 'Photo supprimée ✅';
     const preview = document.getElementById('dailyPreview');
     preview.style.display = 'none';
+    document.getElementById('cropControls').style.display = 'none';
     document.getElementById('dailyNoPhoto').style.display = 'block';
   }
 
@@ -246,7 +285,6 @@
 
   wireHoursSave();
   ensureDailyMenuPanel();
-
   document.querySelector('[data-tab="menu"]')?.addEventListener('click', () => setTimeout(loadDailyMenuEditor, 0));
   setTimeout(async () => {
     const { data: { session } } = await db.auth.getSession();
