@@ -6,18 +6,18 @@
     return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
+  const apiHeaders = {
+    apikey: SUPABASE_KEY,
+    Authorization: `Bearer ${SUPABASE_KEY}`
+  };
+
   async function loadPublicMenu() {
     const grid = document.getElementById('menuGrid');
     const filters = document.getElementById('filters');
     if (!grid || !filters) return;
 
     try {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/menu_items?select=*&is_available=eq.true&order=sort_order.asc,created_at.asc`, {
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${SUPABASE_KEY}`
-        }
-      });
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/menu_items?select=*&is_available=eq.true&order=sort_order.asc,created_at.asc`, { headers: apiHeaders });
       if (!response.ok) throw new Error(await response.text());
       const items = await response.json();
       if (!Array.isArray(items) || !items.length) return;
@@ -45,6 +45,66 @@
       renderMenu();
     } catch (error) {
       console.error('Menu Supabase error:', error);
+    }
+  }
+
+  function toMinutes(value) {
+    if (!value) return null;
+    const [h, m] = String(value).split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  async function loadPublicHours() {
+    const container = document.getElementById('hours');
+    const statusTitle = document.getElementById('statusTitle');
+    const statusDetail = document.getElementById('statusDetail');
+    const statusDot = document.getElementById('statusDot');
+    if (!container) return;
+
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/opening_hours?select=*&order=day_index.asc`, { headers: apiHeaders });
+      if (!response.ok) throw new Error(await response.text());
+      const rows = await response.json();
+      if (!Array.isArray(rows) || rows.length !== 7) return;
+
+      const labelFor = row => {
+        if (row.is_closed) return 'Fermé';
+        const parts = [];
+        if (row.lunch_start && row.lunch_end) parts.push(`${row.lunch_start}–${row.lunch_end}`);
+        if (row.dinner_start && row.dinner_end) parts.push(`${row.dinner_start}–${row.dinner_end}`);
+        return parts.length ? parts.join(' • ') : 'Fermé';
+      };
+
+      container.innerHTML = rows.map(row => `<div class="hour"><strong>${esc(row.day_name)}</strong><span>${esc(labelFor(row))}</span></div>`).join('');
+
+      const now = new Date();
+      const dayIndex = (now.getDay() + 6) % 7;
+      const row = rows.find(x => Number(x.day_index) === dayIndex);
+      if (!row || !statusTitle || !statusDetail || !statusDot) return;
+
+      const current = now.getHours() * 60 + now.getMinutes();
+      const lunchStart = toMinutes(row.lunch_start);
+      const lunchEnd = toMinutes(row.lunch_end);
+      const dinnerStart = toMinutes(row.dinner_start);
+      const dinnerEnd = toMinutes(row.dinner_end);
+      const lunchOpen = lunchStart !== null && lunchEnd !== null && current >= lunchStart && current < lunchEnd;
+      const dinnerOpen = dinnerStart !== null && dinnerEnd !== null && current >= dinnerStart && current < dinnerEnd;
+      const open = !row.is_closed && (lunchOpen || dinnerOpen);
+
+      let detail = 'Fermé aujourd’hui';
+      if (!row.is_closed) {
+        if (lunchOpen) detail = `Service du midi jusqu’à ${row.lunch_end}`;
+        else if (dinnerOpen) detail = `Service du soir jusqu’à ${row.dinner_end}`;
+        else if (lunchStart !== null && current < lunchStart) detail = `Ouvre à ${row.lunch_start} pour le déjeuner`;
+        else if (dinnerStart !== null && current < dinnerStart) detail = `Ouvre à ${row.dinner_start} pour le dîner`;
+        else detail = 'Fermé pour la nuit';
+      }
+
+      statusTitle.textContent = open ? 'Ouvert maintenant' : 'Fermé';
+      statusDetail.textContent = detail;
+      statusDot.style.background = open ? 'var(--ok)' : '#b64b42';
+    } catch (error) {
+      console.error('Opening hours Supabase error:', error);
     }
   }
 
@@ -79,18 +139,14 @@
       const response = await fetch(`${SUPABASE_URL}/rest/v1/reservations`, {
         method: 'POST',
         headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${SUPABASE_KEY}`,
+          ...apiHeaders,
           'Content-Type': 'application/json',
           Prefer: 'return=minimal'
         },
         body: JSON.stringify(payload)
       });
 
-      if (!response.ok) {
-        const details = await response.text();
-        throw new Error(details || `HTTP ${response.status}`);
-      }
+      if (!response.ok) throw new Error(await response.text());
 
       if (success) {
         success.style.display = 'block';
@@ -118,9 +174,7 @@
     }
   }, true);
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadPublicMenu);
-  } else {
-    loadPublicMenu();
-  }
+  const boot = () => Promise.all([loadPublicMenu(), loadPublicHours()]);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 })();
