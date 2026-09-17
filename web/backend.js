@@ -47,28 +47,16 @@
     const left = special.firstElementChild;
     if (!left) return;
 
-    const daily = items.find(x => x.name === 'Menu du jour' || x.is_daily_special) || null;
     const complete = items.find(x => x.name === 'Entrée + Plat + Dessert') || null;
+    if (!complete) return;
 
-    if (!daily && !complete) return;
-
-    const dailyPrice = daily ? `${Number(daily.price).toFixed(2).replace('.', ',')} €` : '10,00 €';
-    const completePrice = complete ? `${Number(complete.price).toFixed(2).replace('.', ',')} €` : '14,20 €';
+    const completePrice = `${Number(complete.price).toFixed(2).replace('.', ',')} €`;
 
     left.innerHTML = `
-      <div class="eyebrow">Menu du jour</div>
-      <h3>Menu du jour</h3>
-      <p style="line-height:1.7;color:#e6eee8;margin-bottom:20px">Menu du jour proposé le midi.</p>
-      <div style="display:grid;gap:12px;max-width:460px">
-        <div style="display:flex;justify-content:space-between;gap:18px;align-items:center;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.18)">
-          <strong style="font-size:18px">Menu du jour</strong>
-          <span class="price" style="font-size:22px">${esc(dailyPrice)}</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;gap:18px;align-items:center;padding:13px 0">
-          <strong style="font-size:18px">Entrée + Plat + Dessert</strong>
-          <span class="price" style="font-size:22px">${esc(completePrice)}</span>
-        </div>
-      </div>`;
+      <div class="eyebrow">Formule du midi</div>
+      <h3>Entrée + Plat + Dessert</h3>
+      <p style="line-height:1.7;color:#e6eee8">Formule complète du midi : entrée + plat + dessert.</p>
+      <div class="price">${esc(completePrice)}</div>`;
   }
 
   async function loadPublicMenu() {
