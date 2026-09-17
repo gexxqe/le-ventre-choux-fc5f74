@@ -36,12 +36,20 @@ jobs:
           cp -R web _site
           python3 - <<'PY'
           from pathlib import Path
-          p = Path('_site/index.html')
-          html = p.read_text(encoding='utf-8')
+
+          index = Path('_site/index.html')
+          html = index.read_text(encoding='utf-8')
           tag = '<script src="./backend.js"></script>'
           if tag not in html:
               html = html.replace('</body>', f'{tag}\n</body>')
-          p.write_text(html, encoding='utf-8')
+          index.write_text(html, encoding='utf-8')
+
+          admin = Path('_site/admin.html')
+          html = admin.read_text(encoding='utf-8')
+          tag = '<script src="./admin-fix.js"></script>'
+          if tag not in html:
+              html = html.replace('</body>', f'{tag}\n</body>')
+          admin.write_text(html, encoding='utf-8')
           PY
 
       - name: Upload web artifact
