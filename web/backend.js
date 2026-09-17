@@ -2,6 +2,8 @@
   const SUPABASE_URL = 'https://ogyjqnbqvihqjikidrya.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_Y5a2AS18uYJhzxh0-GYa0g_VWtSwgFz';
   const GOOGLE_MAPS_URL = 'https://www.google.com/maps/place/Le+Ventre+%C3%A0+Choux/@46.9782285,-1.3100349,16z/data=!4m15!1m8!3m7!1s0x4805d81b50c84cf7:0xf4167f44aac3049c!2s5+Pl.+de+la+R%C3%A9publique,+85600+Montaigu-Vend%C3%A9e!3b1!8m2!3d46.9782285!4d-1.3100349!16s%2Fg%2F11c4qpcf_m!3m5!1s0x4805d804a90a2b87:0xffeae280c0b68a33!8m2!3d46.9781196!4d-1.3098374!16s%2Fg%2F11c2ppqyv6?entry=ttu&g_ep=EgoyMDI2MDkxNC4wIKXMDSoASAFQAw%3D%3D';
+  const DAILY_MENU_ID = 'a4caeb25-db08-4274-973b-6a8f57f5bc69';
+  const DAILY_IMAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/daily-menu/current.webp`;
 
   function esc(v) {
     return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -45,18 +47,31 @@
     if (!special) return;
 
     const left = special.firstElementChild;
+    const art = special.querySelector('.special-art');
     if (!left) return;
 
-    const complete = items.find(x => x.name === 'Entrée + Plat + Dessert') || null;
+    const complete = items.find(x => x.id === DAILY_MENU_ID) || null;
     if (!complete) return;
 
     const completePrice = `${Number(complete.price).toFixed(2).replace('.', ',')} €`;
-
     left.innerHTML = `
       <div class="eyebrow">Formule du midi</div>
-      <h3>Entrée + Plat + Dessert</h3>
-      <p style="line-height:1.7;color:#e6eee8">Formule complète du midi : entrée + plat + dessert.</p>
+      <h3>${esc(complete.name)}</h3>
+      <p style="line-height:1.7;color:#e6eee8">${esc(complete.description || '')}</p>
       <div class="price">${esc(completePrice)}</div>`;
+
+    if (art) {
+      const image = new Image();
+      image.onload = () => {
+        art.style.backgroundImage = `url("${DAILY_IMAGE_URL}?v=${Date.now()}")`;
+        art.style.backgroundSize = 'cover';
+        art.style.backgroundPosition = 'center';
+        art.style.backgroundRepeat = 'no-repeat';
+        art.style.opacity = '1';
+      };
+      image.onerror = () => {};
+      image.src = `${DAILY_IMAGE_URL}?v=${Date.now()}`;
+    }
   }
 
   async function loadPublicMenu() {
@@ -72,7 +87,7 @@
 
       renderLunchSpecial(items);
 
-      const visibleItems = items.filter(x => x.name !== 'Entrée + Plat + Dessert');
+      const visibleItems = items.filter(x => x.id !== DAILY_MENU_ID);
       const categories = ['Tout', ...new Set(visibleItems.map(x => x.category))];
       let selectedCategory = 'Tout';
 
