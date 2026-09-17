@@ -53,11 +53,9 @@ jobs:
           else:
               html = re.sub(r'<script src="\./public-fixes\.js(?:\?v=[^"]*)?"></script>', fixes_tag, html)
 
-          hero_tag = '<script src="./hero-logo.js?v=20260917-1"></script>'
-          if 'hero-logo.js' not in html:
-              html = html.replace('</body>', f'{hero_tag}\n</body>')
-          else:
-              html = re.sub(r'<script src="\./hero-logo\.js(?:\?v=[^"]*)?"></script>', hero_tag, html)
+          hero_tag = '<script src="./hero-logo-fix.js?v=20260917-1"></script>'
+          html = re.sub(r'<script src="\./hero-logo(?:-fix)?\.js(?:\?v=[^"]*)?"></script>', '', html)
+          html = html.replace('</body>', f'{hero_tag}\n</body>')
 
           facebook_url = 'https://www.facebook.com/p/Le-ventre-%C3%A0-choux-61575062150981/'
           facebook_card = f'<a href="{facebook_url}" target="_blank" rel="noreferrer"><span style="font-weight:900;font-family:Arial,sans-serif;color:#1877F2">f</span>Facebook</a>'
