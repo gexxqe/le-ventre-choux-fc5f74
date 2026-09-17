@@ -1,6 +1,7 @@
 (() => {
   const SUPABASE_URL = 'https://ogyjqnbqvihqjikidrya.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_Y5a2AS18uYJhzxh0-GYa0g_VWtSwgFz';
+  const GOOGLE_MAPS_URL = 'https://www.google.com/maps/place/Le+Ventre+%C3%A0+Choux/@46.9782285,-1.3100349,16z/data=!4m15!1m8!3m7!1s0x4805d81b50c84cf7:0xf4167f44aac3049c!2s5+Pl.+de+la+R%C3%A9publique,+85600+Montaigu-Vend%C3%A9e!3b1!8m2!3d46.9782285!4d-1.3100349!16s%2Fg%2F11c4qpcf_m!3m5!1s0x4805d804a90a2b87:0xffeae280c0b68a33!8m2!3d46.9781196!4d-1.3098374!16s%2Fg%2F11c2ppqyv6?entry=ttu&g_ep=EgoyMDI2MDkxNC4wIKXMDSoASAFQAw%3D%3D';
 
   function esc(v) {
     return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -10,6 +11,34 @@
     apikey: SUPABASE_KEY,
     Authorization: `Bearer ${SUPABASE_KEY}`
   };
+
+  function applyVerifiedPublicInfo() {
+    const ratingText = document.querySelector('.pill .stars + span');
+    if (ratingText) ratingText.textContent = '4,7 / 5 • 75 avis Google';
+
+    document.querySelectorAll('.quick a').forEach(link => {
+      if ((link.textContent || '').includes('Itinéraire')) {
+        link.href = GOOGLE_MAPS_URL;
+        link.target = '_blank';
+        link.rel = 'noreferrer';
+      }
+    });
+
+    const reviewsSection = document.getElementById('avis');
+    const reviewsGrid = reviewsSection?.querySelector('.reviews');
+    const reviewsTitle = reviewsSection?.querySelector('h2');
+    if (reviewsGrid) {
+      if (reviewsTitle) reviewsTitle.textContent = 'Avis Google';
+      reviewsGrid.style.gridTemplateColumns = '1fr';
+      reviewsGrid.innerHTML = `
+        <article class="review">
+          <div class="stars">★★★★★</div>
+          <h3>4,7 / 5 sur Google</h3>
+          <p><strong>75 avis</strong> au moment de la vérification. Google indique également : service sur place, vente à emporter, réservations acceptées et options végétariennes.</p>
+          <a class="btn btn-primary" href="${GOOGLE_MAPS_URL}" target="_blank" rel="noreferrer" style="display:inline-block;margin-top:8px">Voir les avis sur Google</a>
+        </article>`;
+    }
+  }
 
   async function loadPublicMenu() {
     const grid = document.getElementById('menuGrid');
@@ -174,7 +203,10 @@
     }
   }, true);
 
-  const boot = () => Promise.all([loadPublicMenu(), loadPublicHours()]);
+  const boot = () => {
+    applyVerifiedPublicInfo();
+    return Promise.all([loadPublicMenu(), loadPublicHours()]);
+  };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 })();
