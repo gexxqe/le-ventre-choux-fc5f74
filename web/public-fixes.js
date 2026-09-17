@@ -3,27 +3,6 @@
   const SUPABASE_KEY = 'sb_publishable_Y5a2AS18uYJhzxh0-GYa0g_VWtSwgFz';
   const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` };
 
-  const money = value => `${Number(value).toFixed(2).replace('.', ',')} €`;
-
-  async function syncDailySpecial() {
-    try {
-      const r = await fetch(`${SUPABASE_URL}/rest/v1/menu_items?select=name,description,price&is_available=eq.true&is_daily_special=eq.true&limit=1`, { headers });
-      if (!r.ok) return;
-      const [item] = await r.json();
-      if (!item) return;
-      const box = document.querySelector('.special');
-      if (!box) return;
-      const title = box.querySelector('h3');
-      const text = box.querySelector('p');
-      const price = box.querySelector('.price');
-      if (title) title.textContent = item.name;
-      if (text) text.textContent = item.description || 'Menu du jour proposé le midi.';
-      if (price) price.textContent = money(item.price);
-    } catch (e) {
-      console.error('Daily special sync error', e);
-    }
-  }
-
   function minutesToTime(total) {
     const h = String(Math.floor(total / 60)).padStart(2, '0');
     const m = String(total % 60).padStart(2, '0');
@@ -82,7 +61,6 @@
     }
   }
 
-  const boot = () => Promise.all([syncDailySpecial(), syncReservationTimes()]);
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
-  else boot();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', syncReservationTimes);
+  else syncReservationTimes();
 })();
