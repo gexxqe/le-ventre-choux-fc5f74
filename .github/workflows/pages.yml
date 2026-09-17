@@ -41,7 +41,7 @@ jobs:
           index = Path('_site/index.html')
           html = index.read_text(encoding='utf-8')
 
-          backend_tag = '<script src="./backend.js?v=20260917-6"></script>'
+          backend_tag = '<script src="./backend.js?v=20260917-7"></script>'
           if 'backend.js' not in html:
               html = html.replace('</body>', f'{backend_tag}\n</body>')
           else:
