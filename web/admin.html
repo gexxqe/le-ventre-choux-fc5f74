@@ -1,112 +1,43 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#173c2b">
-  <title>Administration — Le Ventre à Choux</title>
-  <style>
-    :root{--brand:#173c2b;--brand2:#24583f;--accent:#d7a94c;--cream:#f7f2e8;--paper:#fffdf8;--ink:#1d2923;--muted:#6e766f;--line:#e7ded0;--ok:#2f8a57;--danger:#b94b45;--shadow:0 18px 50px rgba(23,60,43,.12)}
-    *{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}a{color:inherit;text-decoration:none}.hidden{display:none!important}.shell{max-width:1180px;margin:auto;padding:0 20px}.top{position:sticky;top:0;z-index:30;background:rgba(247,242,232,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}.topin{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:10px;font-family:Georgia,serif;font-weight:800;color:var(--brand);font-size:20px}.logo{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--brand);color:var(--accent)}.btn{border:0;border-radius:999px;padding:11px 16px;font-weight:800;cursor:pointer}.primary{background:linear-gradient(135deg,var(--accent),#edca78);color:#2e260f}.secondary{background:var(--paper);border:1px solid var(--line);color:var(--brand)}.danger{background:#fff1ef;color:var(--danger);border:1px solid #efc6c2}.login-wrap{min-height:100vh;display:grid;place-items:center;padding:24px}.login-card{width:min(440px,100%);background:var(--paper);border:1px solid var(--line);border-radius:28px;padding:30px;box-shadow:var(--shadow)}.login-card h1{font-family:Georgia,serif;color:var(--brand);margin:10px 0 8px;font-size:34px}.muted{color:var(--muted);line-height:1.55}.field{display:grid;gap:7px;margin-top:16px}.field label{font-size:13px;font-weight:800;color:var(--brand)}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:white;border-radius:14px;padding:12px 14px;outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(215,169,76,.14)}.notice{margin-top:16px;padding:12px 14px;border-radius:14px;background:#fff7df;color:#785d1e;font-size:13px;line-height:1.5}.error{color:var(--danger);font-size:13px;font-weight:700;margin-top:10px}.tabs{display:flex;gap:8px;overflow:auto;padding:18px 0 4px}.tab{white-space:nowrap;border:1px solid var(--line);background:var(--paper);color:var(--brand);padding:10px 14px;border-radius:999px;font-weight:800;cursor:pointer}.tab.active{background:var(--brand);color:white;border-color:var(--brand)}.page{padding:22px 0 70px}.heading{display:flex;align-items:end;justify-content:space-between;gap:18px;margin:12px 0 18px}.heading h1{font-family:Georgia,serif;color:var(--brand);font-size:clamp(32px,5vw,48px);margin:0}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.stat{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:18px}.stat b{font-size:28px;color:var(--brand);display:block}.panel{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:22px;margin-top:14px}.reservation{border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:12px;background:white}.rhead{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.rname{font-family:Georgia,serif;font-size:20px;color:var(--brand);font-weight:800}.pill{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900}.pending{background:#fff6db;color:#8a681b}.confirmed{background:#eaf7ef;color:#226c43}.declined{background:#fff0ee;color:#a33e38}.meta{color:var(--muted);font-size:14px;margin-top:5px}.msg{margin:12px 0;padding:10px 12px;background:var(--cream);border-radius:12px;color:var(--muted);font-style:italic}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.item-row{display:grid;grid-template-columns:1fr 110px 90px;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.item-row:last-child{border-bottom:0}.hours-row{display:grid;grid-template-columns:130px 1fr;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.savebar{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}.empty{text-align:center;padding:36px;color:var(--muted)}.small{font-size:12px;color:var(--muted)}
-    @media(max-width:760px){.stats{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.item-row{grid-template-columns:1fr}.hours-row{grid-template-columns:1fr}.heading{align-items:flex-start;flex-direction:column}.topin{min-height:64px}.brand{font-size:17px}}
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#173c2b">
+<title>Administration — Le Ventre à Choux</title>
+<style>
+:root{--brand:#173c2b;--accent:#d7a94c;--cream:#f7f2e8;--paper:#fffdf8;--ink:#1d2923;--muted:#6e766f;--line:#e7ded0;--ok:#2f8a57;--danger:#b94b45}*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}button,input,textarea{font:inherit}.hidden{display:none!important}.shell{max-width:1100px;margin:auto;padding:0 18px}.login{min-height:100vh;display:grid;place-items:center;padding:24px}.card,.panel{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:22px}.card{width:min(450px,100%);box-shadow:0 20px 60px rgba(23,60,43,.12)}h1,h2{font-family:Georgia,serif;color:var(--brand)}h1{font-size:34px;margin:8px 0}.muted{color:var(--muted);line-height:1.55}.field{display:grid;gap:6px;margin-top:13px}.field label{font-size:13px;font-weight:800;color:var(--brand)}input,textarea{width:100%;border:1px solid var(--line);border-radius:13px;padding:12px;background:white}.btn{border:0;border-radius:999px;padding:11px 15px;font-weight:800;cursor:pointer}.primary{background:linear-gradient(135deg,var(--accent),#edca78);color:#2e260f}.secondary{background:white;border:1px solid var(--line);color:var(--brand)}.danger{background:#fff0ee;color:var(--danger);border:1px solid #efcbc7}.top{position:sticky;top:0;background:rgba(247,242,232,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);z-index:10}.topin{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{font-family:Georgia,serif;font-weight:800;color:var(--brand)}.tabs{display:flex;gap:8px;overflow:auto;padding:18px 0}.tab{white-space:nowrap}.tab.active{background:var(--brand);color:white}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.stat{background:white;border:1px solid var(--line);border-radius:18px;padding:16px}.stat b{display:block;font-size:26px;color:var(--brand)}.reservation,.row{background:white;border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:10px}.rhead{display:flex;justify-content:space-between;gap:12px}.pill{font-size:11px;font-weight:900;padding:5px 8px;border-radius:999px}.pending{background:#fff6db;color:#856719}.confirmed{background:#eaf7ef;color:#226c43}.declined{background:#fff0ee;color:#a33e38}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.toolbar{display:flex;gap:8px;justify-content:space-between;align-items:center;margin:12px 0}.error{color:var(--danger);font-weight:700;margin-top:10px}.ok{color:var(--ok);font-weight:700;margin-top:10px}.small{font-size:12px;color:var(--muted)}@media(max-width:720px){.stats,.grid{grid-template-columns:1fr}.topin{align-items:flex-start;padding:12px 0;flex-direction:column}.rhead{flex-direction:column}}
+</style>
 </head>
 <body>
-<section id="login" class="login-wrap">
-  <div class="login-card">
-    <div class="logo">🔐</div>
-    <h1>Espace Restaurateur</h1>
-    <p class="muted">Version de démonstration de l'administration web de Le Ventre à Choux.</p>
-    <form id="loginForm">
-      <div class="field"><label>Code PIN</label><input id="pin" inputmode="numeric" autocomplete="off" placeholder="•••••" required></div>
-      <button class="btn primary" style="width:100%;margin-top:18px" type="submit">Se connecter</button>
-      <div id="loginError" class="error hidden">Code incorrect.</div>
-    </form>
-    <div class="notice"><strong>Démo uniquement :</strong> ce PIN est vérifié dans le navigateur et n'est pas une sécurité réelle. Nous ajouterons une vraie authentification avant utilisation publique.</div>
-  </div>
-</section>
-
-<div id="app" class="hidden">
-  <header class="top"><div class="shell topin"><a class="brand" href="index.html"><span class="logo">🍴</span>Le Ventre à Choux — Admin</a><div style="display:flex;gap:8px"><a class="btn secondary" href="index.html">Voir le site</a><button id="logout" class="btn secondary">Déconnexion</button></div></div></header>
-  <main class="shell page">
-    <div class="tabs" id="tabs">
-      <button class="tab active" data-tab="reservations">Réservations</button>
-      <button class="tab" data-tab="menu">Carte & Plats</button>
-      <button class="tab" data-tab="hours">Horaires</button>
-      <button class="tab" data-tab="info">Infos & Contact</button>
-    </div>
-
-    <section id="reservations" class="sectionView">
-      <div class="heading"><div><div class="small">TABLEAU DE BORD</div><h1>Réservations</h1></div><button class="btn secondary" id="refreshReservations">Actualiser</button></div>
-      <div class="stats"><div class="stat"><span class="small">Total</span><b id="totalCount">0</b></div><div class="stat"><span class="small">En attente</span><b id="pendingCount">0</b></div><div class="stat"><span class="small">Confirmées</span><b id="confirmedCount">0</b></div></div>
-      <div class="panel"><strong>Demandes reçues sur cet appareil</strong><div class="small" style="margin-top:5px">Le site public et cet espace admin partagent le même stockage local du navigateur.</div><div id="reservationList"></div></div>
-    </section>
-
-    <section id="menu" class="sectionView hidden">
-      <div class="heading"><div><div class="small">GESTION LOCALE</div><h1>Carte & Plats</h1></div></div>
-      <div class="panel"><div class="small">Ces modifications sont enregistrées localement pour tester l'interface admin. Elles ne modifient pas encore le site public.</div><div id="menuRows"></div><div class="savebar"><button class="btn secondary" id="resetMenu">Réinitialiser</button><button class="btn primary" id="saveMenu">Enregistrer</button></div></div>
-    </section>
-
-    <section id="hours" class="sectionView hidden">
-      <div class="heading"><div><div class="small">GESTION LOCALE</div><h1>Horaires</h1></div></div>
-      <div class="panel"><div id="hoursRows"></div><div class="savebar"><button class="btn primary" id="saveHours">Enregistrer</button></div></div>
-    </section>
-
-    <section id="info" class="sectionView hidden">
-      <div class="heading"><div><div class="small">GESTION LOCALE</div><h1>Infos & Contact</h1></div></div>
-      <div class="panel"><div class="grid2"><div class="field"><label>Nom</label><input id="restaurantName"></div><div class="field"><label>Téléphone</label><input id="restaurantPhone"></div><div class="field"><label>Adresse</label><input id="restaurantAddress"></div><div class="field"><label>E-mail</label><input id="restaurantEmail"></div></div><div class="savebar"><button class="btn primary" id="saveInfo">Enregistrer</button></div></div>
-    </section>
-  </main>
-</div>
-
+<section id="authView" class="login"><div class="card"><div style="font-size:34px">🔐</div><h1>Espace Restaurateur</h1><p class="muted">Connexion sécurisée via Supabase. Le PIN de démonstration n'est plus utilisé.</p><form id="authForm"><div class="field"><label>E-mail</label><input id="email" type="email" autocomplete="email" required></div><div class="field"><label>Mot de passe</label><input id="password" type="password" minlength="8" autocomplete="current-password" required></div><button id="loginBtn" class="btn primary" type="submit" style="width:100%;margin-top:16px">Se connecter</button></form><button id="signupBtn" class="btn secondary" style="width:100%;margin-top:10px">Créer mon compte administrateur</button><div id="authMsg" class="small" style="margin-top:12px"></div></div></section>
+<div id="pendingView" class="login hidden"><div class="card"><h1>Compte créé</h1><p class="muted">Le compte existe, mais il n'a pas encore les droits administrateur. Reviens dans ChatGPT și scrie <b>„gata”</b>; îl aprob în baza de date.</p><button id="pendingLogout" class="btn secondary">Déconnexion</button></div></div>
+<div id="app" class="hidden"><header class="top"><div class="shell topin"><div class="brand">🍴 Le Ventre à Choux — Admin</div><div><a class="btn secondary" href="index.html">Voir le site</a> <button id="logout" class="btn secondary">Déconnexion</button></div></div></header><main class="shell" style="padding-bottom:60px"><div class="tabs"><button class="btn tab active" data-tab="reservations">Réservations</button><button class="btn tab secondary" data-tab="menu">Carte & Plats</button><button class="btn tab secondary" data-tab="hours">Horaires</button><button class="btn tab secondary" data-tab="info">Infos & Contact</button></div>
+<section id="reservations" class="view"><div class="toolbar"><h2>Réservations</h2><button id="refresh" class="btn secondary">Actualiser</button></div><div class="stats"><div class="stat"><span class="small">Total</span><b id="total">0</b></div><div class="stat"><span class="small">En attente</span><b id="pending">0</b></div><div class="stat"><span class="small">Confirmées</span><b id="confirmed">0</b></div></div><div id="reservationList"></div></section>
+<section id="menu" class="view hidden"><div class="toolbar"><h2>Carte & Plats</h2><button id="reloadMenu" class="btn secondary">Actualiser</button></div><div id="menuList"></div></section>
+<section id="hours" class="view hidden"><div class="toolbar"><h2>Horaires</h2><button id="saveHours" class="btn primary">Enregistrer</button></div><div id="hoursList"></div></section>
+<section id="info" class="view hidden"><h2>Infos & Contact</h2><div class="panel"><div class="grid"><div class="field"><label>Nom</label><input id="rName"></div><div class="field"><label>Téléphone</label><input id="rPhone"></div><div class="field"><label>Adresse</label><input id="rAddress"></div><div class="field"><label>Ville</label><input id="rCity"></div><div class="field"><label>E-mail</label><input id="rEmail"></div></div><button id="saveInfo" class="btn primary" style="margin-top:14px">Enregistrer</button><div id="infoMsg" class="small"></div></div></section>
+</main></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const DEMO_PIN='85600';
-const RES_KEY='lvac_web_reservations';
-const MENU_KEY='lvac_admin_menu';
-const HOURS_KEY='lvac_admin_hours';
-const INFO_KEY='lvac_admin_info';
-const defaultMenu=[
-  {name:'Plat du jour du Chef',price:14.50,category:'Plats'},
-  {name:'Formule Midi Express',price:16.90,category:'Formules'},
-  {name:'Formule Complète Vendéenne',price:21.50,category:'Formules'},
-  {name:'Salade de chèvre chaud vendéen',price:7.50,category:'Entrées'},
-  {name:'Terrine maison au poivre vert',price:6.90,category:'Entrées'},
-  {name:"Bavette d'aloyau poêlée aux échalotes",price:17.50,category:'Plats'},
-  {name:'Filet de poisson du marché au beurre blanc',price:18.00,category:'Plats'},
-  {name:'Omelette végétarienne aux herbes et champignons',price:13.50,category:'Options végétariennes'},
-  {name:'Brioche vendéenne perdue au caramel beurre salé',price:6.80,category:'Desserts'}
-];
-const defaultHours={Lundi:'12:00–14:00 • 19:00–22:00',Mardi:'12:00–14:00 • 19:00–22:00',Mercredi:'12:00–14:00 • 19:00–22:00',Jeudi:'12:00–14:00 • 19:00–22:00',Vendredi:'12:00–14:00 • 19:00–22:30',Samedi:'12:00–14:30 • 19:00–23:00',Dimanche:'Fermé'};
-const defaultInfo={name:'Le Ventre à Choux',phone:'02 51 94 00 81',address:'5 Place de la République, 85600 Montaigu-Vendée',email:'contact@leventreachoux.fr'};
-
-function showApp(){document.getElementById('login').classList.add('hidden');document.getElementById('app').classList.remove('hidden');renderReservations();renderMenu();renderHours();renderInfo()}
-if(sessionStorage.getItem('lvac_admin_demo')==='1')showApp();
-loginForm.addEventListener('submit',e=>{e.preventDefault();if(pin.value===DEMO_PIN){sessionStorage.setItem('lvac_admin_demo','1');loginError.classList.add('hidden');showApp()}else loginError.classList.remove('hidden')});
-logout.onclick=()=>{sessionStorage.removeItem('lvac_admin_demo');location.reload()};
-
-document.querySelectorAll('.tab').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.sectionView').forEach(x=>x.classList.add('hidden'));document.getElementById(btn.dataset.tab).classList.remove('hidden')});
-
-function getReservations(){try{return JSON.parse(localStorage.getItem(RES_KEY)||'[]')}catch{return []}}
-function saveReservations(list){localStorage.setItem(RES_KEY,JSON.stringify(list));renderReservations()}
-function renderReservations(){const list=getReservations();totalCount.textContent=list.length;pendingCount.textContent=list.filter(x=>x.status==='En attente').length;confirmedCount.textContent=list.filter(x=>x.status==='Confirmée').length;if(!list.length){reservationList.innerHTML='<div class="empty">Aucune réservation enregistrée sur ce navigateur.<br><span class="small">Fais une réservation de test depuis le site public, apoi revino aici.</span></div>';return}reservationList.innerHTML=list.map((r,i)=>{const cls=r.status==='Confirmée'?'confirmed':r.status==='Refusée'?'declined':'pending';return `<div class="reservation"><div class="rhead"><div><div class="rname">${escapeHtml(r.name||'Client')}</div><div class="meta">${escapeHtml(r.guests||'?')} personne(s) • ${escapeHtml(r.date||'')} à ${escapeHtml(r.time||'')}</div></div><span class="pill ${cls}">${escapeHtml(r.status||'En attente')}</span></div><div class="meta">☎ ${escapeHtml(r.phone||'')}</div>${r.message?`<div class="msg">“${escapeHtml(r.message)}”</div>`:''}<div class="actions"><button class="btn primary" onclick="setStatus(${i},'Confirmée')">Confirmer</button><button class="btn secondary" onclick="setStatus(${i},'Refusée')">Refuser</button><button class="btn danger" onclick="deleteReservation(${i})">Supprimer</button></div></div>`}).join('')}
-window.setStatus=(i,status)=>{const list=getReservations();if(list[i]){list[i].status=status;saveReservations(list)}};
-window.deleteReservation=i=>{const list=getReservations();list.splice(i,1);saveReservations(list)};
-refreshReservations.onclick=renderReservations;
-
-function getMenu(){try{return JSON.parse(localStorage.getItem(MENU_KEY))||defaultMenu}catch{return defaultMenu}}
-function renderMenu(){const items=getMenu();menuRows.innerHTML=items.map((x,i)=>`<div class="item-row"><input data-mi="${i}" data-k="name" value="${escapeAttr(x.name)}"><input data-mi="${i}" data-k="price" type="number" step="0.10" value="${Number(x.price).toFixed(2)}"><span class="small">${escapeHtml(x.category)}</span></div>`).join('')}
-saveMenu.onclick=()=>{const items=getMenu().map(x=>({...x}));document.querySelectorAll('[data-mi]').forEach(el=>{const i=+el.dataset.mi;items[i][el.dataset.k]=el.dataset.k==='price'?Number(el.value):el.value});localStorage.setItem(MENU_KEY,JSON.stringify(items));alert('Carte enregistrée localement pour la démo.');renderMenu()};
-resetMenu.onclick=()=>{localStorage.removeItem(MENU_KEY);renderMenu()};
-
-function getHours(){try{return JSON.parse(localStorage.getItem(HOURS_KEY))||defaultHours}catch{return defaultHours}}
-function renderHours(){const h=getHours();hoursRows.innerHTML=Object.entries(h).map(([day,val])=>`<div class="hours-row"><strong>${day}</strong><input data-day="${day}" value="${escapeAttr(val)}"></div>`).join('')}
-saveHours.onclick=()=>{const h={};document.querySelectorAll('[data-day]').forEach(el=>h[el.dataset.day]=el.value);localStorage.setItem(HOURS_KEY,JSON.stringify(h));alert('Horaires enregistrés localement pour la démo.')};
-
-function renderInfo(){let x;try{x=JSON.parse(localStorage.getItem(INFO_KEY))||defaultInfo}catch{x=defaultInfo}restaurantName.value=x.name;restaurantPhone.value=x.phone;restaurantAddress.value=x.address;restaurantEmail.value=x.email}
-saveInfo.onclick=()=>{localStorage.setItem(INFO_KEY,JSON.stringify({name:restaurantName.value,phone:restaurantPhone.value,address:restaurantAddress.value,email:restaurantEmail.value}));alert('Informations enregistrées localement pour la démo.')};
-
-function escapeHtml(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-function escapeAttr(v=''){return escapeHtml(v)}
+const SUPABASE_URL='https://ogyjqnbqvihqjikidrya.supabase.co';
+const SUPABASE_KEY='sb_publishable_Y5a2AS18uYJhzxh0-GYa0g_VWtSwgFz';
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const authView=document.getElementById('authView'),pendingView=document.getElementById('pendingView'),app=document.getElementById('app'),authMsg=document.getElementById('authMsg');
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function isAdmin(user){const {data,error}=await db.from('admin_users').select('user_id').eq('user_id',user.id).maybeSingle();return !error&&!!data}
+async function route(){const {data:{session}}=await db.auth.getSession();authView.classList.add('hidden');pendingView.classList.add('hidden');app.classList.add('hidden');if(!session){authView.classList.remove('hidden');return}if(await isAdmin(session.user)){app.classList.remove('hidden');await loadAll()}else pendingView.classList.remove('hidden')}
+authForm.addEventListener('submit',async e=>{e.preventDefault();authMsg.textContent='Connexion…';const {error}=await db.auth.signInWithPassword({email:email.value.trim(),password:password.value});if(error){authMsg.className='error';authMsg.textContent=error.message}else{authMsg.textContent='';route()}});
+signupBtn.onclick=async()=>{if(!email.value||password.value.length<8){authMsg.className='error';authMsg.textContent='Entre un e-mail et un mot de passe d’au moins 8 caractères.';return}authMsg.className='small';authMsg.textContent='Création du compte…';const {error}=await db.auth.signUp({email:email.value.trim(),password:password.value});if(error){authMsg.className='error';authMsg.textContent=error.message}else{authMsg.className='ok';authMsg.textContent='Compte créé. Si Supabase demande une confirmation e-mail, confirme-la, puis scrie „gata” în ChatGPT.';setTimeout(route,700)}};
+logout.onclick=pendingLogout.onclick=async()=>{await db.auth.signOut();route()};
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.view').forEach(x=>x.classList.add('hidden'));document.getElementById(b.dataset.tab).classList.remove('hidden')});
+async function loadReservations(){const {data,error}=await db.from('reservations').select('*').order('created_at',{ascending:false});if(error){reservationList.innerHTML='<div class="error">'+esc(error.message)+'</div>';return}total.textContent=data.length;pending.textContent=data.filter(x=>x.status==='pending').length;confirmed.textContent=data.filter(x=>x.status==='confirmed').length;reservationList.innerHTML=data.length?data.map(r=>`<div class="reservation"><div class="rhead"><div><b>${esc(r.customer_name)}</b><div class="small">${esc(r.guest_count)} personne(s) • ${esc(r.reservation_date)} à ${esc(r.reservation_time)} • ${esc(r.phone)}</div></div><span class="pill ${r.status}">${r.status==='pending'?'En attente':r.status==='confirmed'?'Confirmée':'Refusée'}</span></div>${r.message?`<div class="small" style="margin-top:8px">“${esc(r.message)}”</div>`:''}<div class="actions"><button class="btn primary" onclick="setStatus('${r.id}','confirmed')">Confirmer</button><button class="btn secondary" onclick="setStatus('${r.id}','declined')">Refuser</button><button class="btn danger" onclick="removeReservation('${r.id}')">Supprimer</button></div></div>`).join(''):'<div class="panel muted">Aucune réservation.</div>'}
+window.setStatus=async(id,status)=>{await db.from('reservations').update({status,updated_at:new Date().toISOString()}).eq('id',id);loadReservations()};window.removeReservation=async id=>{if(confirm('Supprimer cette réservation ?')){await db.from('reservations').delete().eq('id',id);loadReservations()}};refresh.onclick=loadReservations;
+async function loadMenu(){const {data,error}=await db.from('menu_items').select('*').order('sort_order');if(error){menuList.innerHTML='<div class="error">'+esc(error.message)+'</div>';return}menuList.innerHTML=data.map(x=>`<div class="row"><div class="grid"><div class="field"><label>Plat</label><input id="n_${x.id}" value="${esc(x.name)}"></div><div class="field"><label>Prix (€)</label><input id="p_${x.id}" type="number" step="0.10" value="${Number(x.price).toFixed(2)}"></div></div><div class="actions"><button class="btn primary" onclick="saveDish('${x.id}')">Enregistrer</button><button class="btn secondary" onclick="toggleDish('${x.id}',${x.is_available})">${x.is_available?'Masquer':'Afficher'}</button></div></div>`).join('')}
+window.saveDish=async id=>{await db.from('menu_items').update({name:document.getElementById('n_'+id).value,price:Number(document.getElementById('p_'+id).value),updated_at:new Date().toISOString()}).eq('id',id);loadMenu()};window.toggleDish=async(id,current)=>{await db.from('menu_items').update({is_available:!current,updated_at:new Date().toISOString()}).eq('id',id);loadMenu()};reloadMenu.onclick=loadMenu;
+async function loadHours(){const {data,error}=await db.from('opening_hours').select('*').order('day_index');if(error)return;hoursList.innerHTML=data.map(x=>`<div class="row"><b>${esc(x.day_name)}</b><div class="grid"><div class="field"><label>Midi</label><input id="hl_${x.day_index}" value="${esc(x.is_closed?'Fermé':(x.lunch_start||'')+'-'+(x.lunch_end||''))}"></div><div class="field"><label>Soir</label><input id="hd_${x.day_index}" value="${esc(x.is_closed?'Fermé':(x.dinner_start||'')+'-'+(x.dinner_end||''))}"></div></div></div>`).join('')}
+saveHours.onclick=async()=>{for(let i=0;i<7;i++){const l=document.getElementById('hl_'+i).value.trim(),d=document.getElementById('hd_'+i).value.trim(),closed=/fermé/i.test(l)||/fermé/i.test(d),ls=l.split('-'),ds=d.split('-');await db.from('opening_hours').update({is_closed:closed,lunch_start:closed?null:(ls[0]||null),lunch_end:closed?null:(ls[1]||null),dinner_start:closed?null:(ds[0]||null),dinner_end:closed?null:(ds[1]||null)}).eq('day_index',i)}alert('Horaires enregistrés');loadHours()};
+async function loadInfo(){const {data}=await db.from('restaurant_settings').select('*').eq('id',1).single();if(!data)return;rName.value=data.name;rPhone.value=data.phone;rAddress.value=data.address;rCity.value=data.city_postcode;rEmail.value=data.email}
+saveInfo.onclick=async()=>{const {error}=await db.from('restaurant_settings').update({name:rName.value,phone:rPhone.value,address:rAddress.value,city_postcode:rCity.value,email:rEmail.value,updated_at:new Date().toISOString()}).eq('id',1);infoMsg.textContent=error?error.message:'Enregistré ✅'};
+async function loadAll(){await Promise.all([loadReservations(),loadMenu(),loadHours(),loadInfo()])}
+route();
 </script>
-</body>
-</html>
+</body></html>
