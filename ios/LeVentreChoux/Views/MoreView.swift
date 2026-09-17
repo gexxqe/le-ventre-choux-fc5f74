@@ -45,9 +45,9 @@ public struct MoreView: View {
             .background(StayTokens.ground.ignoresSafeArea())
             .navigationTitle("Plus d'informations")
             .navigationBarTitleDisplayMode(.inline)
-            .fullScreenCover(isPresented: $showingAdminLogin) {
-                AdminView(store: store)
-            }
+   .fullScreenCover(isPresented: $showingAdminLogin) {
+    AdminLoginView(store: store)
+}
         }
     }
     
@@ -203,5 +203,82 @@ struct MoreNavRow: View {
         .background(StayTokens.surface)
         .clipShape(RoundedRectangle(cornerRadius: StayTokens.radiusCard, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: StayTokens.radiusCard, style: .continuous).stroke(StayTokens.hairline, lineWidth: 1))
+    }
+}
+struct AdminLoginView: View {
+    @ObservedObject var store: RestaurantStore
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var pin = ""
+    @State private var showError = false
+    @State private var isAuthenticated = false
+
+    private let adminPIN = "5831"
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 24) {
+                Image(systemName: "lock.shield.fill")
+                    .font(.system(size: 60))
+                    .foregroundStyle(StayTokens.brandPrimary)
+
+                Text("Espace Restaurateur")
+                    .font(StayTokens.bistroTitle(26))
+                    .foregroundStyle(StayTokens.brandPrimary)
+
+                Text("Entrez votre code PIN administrateur")
+                    .font(.system(size: 14))
+                    .foregroundStyle(StayTokens.inkSecondary)
+
+                SecureField("Code PIN", text: $pin)
+                    .keyboardType(.numberPad)
+                    .multilineTextAlignment(.center)
+                    .font(.system(size: 24, weight: .bold))
+                    .padding()
+                    .background(StayTokens.surfaceSoft)
+                    .clipShape(
+                        RoundedRectangle(
+                            cornerRadius: StayTokens.radiusField,
+                            style: .continuous
+                        )
+                    )
+                    .padding(.horizontal, 40)
+
+                if showError {
+                    Text("Code PIN incorrect")
+                        .foregroundStyle(.red)
+                }
+
+                Button {
+                    if pin == adminPIN {
+                        showError = false
+                        isAuthenticated = true
+                    } else {
+                        pin = ""
+                        showError = true
+                    }
+                } label: {
+                    Text("Se connecter")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(StayTokens.inkOnAccent)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(StayTokens.brandPrimary)
+                        .clipShape(Capsule())
+                }
+                .padding(.horizontal, 40)
+
+                Button("Annuler") {
+                    dismiss()
+                }
+
+                Spacer()
+            }
+            .padding(.top, 60)
+            .background(StayTokens.ground.ignoresSafeArea())
+            .fullScreenCover(isPresented: $isAuthenticated) {
+                AdminView(store: store)
+            }
+        }
     }
 }
