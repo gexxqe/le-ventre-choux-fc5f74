@@ -39,15 +39,15 @@ jobs:
 
           index = Path('_site/index.html')
           html = index.read_text(encoding='utf-8')
-          tag = '<script src="./backend.js"></script>'
-          if tag not in html:
+          tag = '<script src="./backend.js?v=20260917-2"></script>'
+          if 'backend.js' not in html:
               html = html.replace('</body>', f'{tag}\n</body>')
           index.write_text(html, encoding='utf-8')
 
           admin = Path('_site/admin.html')
           html = admin.read_text(encoding='utf-8')
-          tag = '<script src="./admin-fix.js"></script>'
-          if tag not in html:
+          tag = '<script src="./admin-fix.js?v=20260917-2"></script>'
+          if 'admin-fix.js' not in html:
               html = html.replace('</body>', f'{tag}\n</body>')
           admin.write_text(html, encoding='utf-8')
           PY
