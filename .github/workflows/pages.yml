@@ -36,15 +36,25 @@ jobs:
           cp -R web _site
           python3 - <<'PY'
           from pathlib import Path
+          import re
 
           index = Path('_site/index.html')
           html = index.read_text(encoding='utf-8')
+
           tag = '<script src="./backend.js?v=20260917-3"></script>'
           if 'backend.js' not in html:
               html = html.replace('</body>', f'{tag}\n</body>')
           else:
-              import re
               html = re.sub(r'<script src="\./backend\.js(?:\?v=[^"]*)?"></script>', tag, html)
+
+          facebook_url = 'https://www.facebook.com/p/Le-ventre-%C3%A0-choux-61575062150981/'
+          facebook_card = f'<a href="{facebook_url}" target="_blank" rel="noreferrer"><span style="font-weight:900;font-family:Arial,sans-serif;color:#1877F2">f</span>Facebook</a>'
+          if facebook_url not in html:
+              marker = '<a href="#menu"><span>🍴</span>Menu</a>'
+              html = html.replace(marker, facebook_card + marker)
+
+          html = html.replace('.quick{display:grid;grid-template-columns:repeat(4,1fr);', '.quick{display:grid;grid-template-columns:repeat(5,1fr);')
+          html = html.replace('@media(max-width:800px){.navlinks{display:none}.hero-card{min-height:470px;padding:28px 24px}.quick{grid-template-columns:repeat(2,1fr)}', '@media(max-width:800px){.navlinks{display:none}.hero-card{min-height:470px;padding:28px 24px}.quick{grid-template-columns:repeat(2,1fr)}')
           index.write_text(html, encoding='utf-8')
 
           admin = Path('_site/admin.html')
@@ -53,7 +63,6 @@ jobs:
           if 'admin-fix.js' not in html:
               html = html.replace('</body>', f'{tag}\n</body>')
           else:
-              import re
               html = re.sub(r'<script src="\./admin-fix\.js(?:\?v=[^"]*)?"></script>', tag, html)
           admin.write_text(html, encoding='utf-8')
           PY
