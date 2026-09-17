@@ -64,7 +64,7 @@ jobs:
 
           admin = Path('_site/admin.html')
           html = admin.read_text(encoding='utf-8')
-          admin_tag = '<script src="./admin-fix.js?v=20260917-4"></script>'
+          admin_tag = '<script src="./admin-fix.js?v=20260917-5"></script>'
           if 'admin-fix.js' not in html:
               html = html.replace('</body>', f'{admin_tag}\n</body>')
           else:
