@@ -1,4 +1,8 @@
 (() => {
+  const DAILY_MENU_ID = 'a4caeb25-db08-4274-973b-6a8f57f5bc69';
+  const DAILY_BUCKET = 'daily-menu';
+  const DAILY_IMAGE_PATH = 'current.webp';
+
   function repairDeleteButtons() {
     document.querySelectorAll('#menuList .row').forEach(row => {
       const saveButton = row.querySelector('button[onclick^="saveDish("]');
@@ -78,6 +82,162 @@
     };
   }
 
+  function ensureDailyMenuPanel() {
+    const menuSection = document.getElementById('menu');
+    const menuList = document.getElementById('menuList');
+    if (!menuSection || !menuList || document.getElementById('dailyMenuPanel')) return;
+
+    const panel = document.createElement('div');
+    panel.id = 'dailyMenuPanel';
+    panel.className = 'panel';
+    panel.style.marginBottom = '18px';
+    panel.innerHTML = `
+      <h3 style="margin-top:0">Menu du jour — mise en avant</h3>
+      <p class="small">Cette zone contrôle le grand bloc vert du site.</p>
+      <div class="grid3">
+        <div class="field"><label>Titre</label><input id="dailyTitle"></div>
+        <div class="field"><label>Prix (€)</label><input id="dailyPrice" type="number" min="0" step="0.10"></div>
+        <div class="field"><label>Photo du jour</label><input id="dailyPhoto" type="file" accept="image/jpeg,image/png,image/webp"></div>
+      </div>
+      <div class="field"><label>Description</label><textarea id="dailyDescription" rows="3"></textarea></div>
+      <div style="display:grid;grid-template-columns:minmax(220px,360px) 1fr;gap:18px;align-items:start;margin-top:14px">
+        <div>
+          <img id="dailyPreview" alt="Aperçu du menu du jour" style="display:none;width:100%;max-height:260px;object-fit:cover;border-radius:16px;border:1px solid var(--line)">
+          <div id="dailyNoPhoto" class="small">Aucune photo chargée pour le moment.</div>
+        </div>
+        <div>
+          <div class="actions" style="margin-top:0">
+            <button id="saveDailyMenu" class="btn primary">Enregistrer le menu du jour</button>
+            <button id="removeDailyPhoto" class="btn danger">Supprimer la photo</button>
+          </div>
+          <div id="dailyMenuMsg" class="small" style="margin-top:10px"></div>
+        </div>
+      </div>`;
+    menuSection.insertBefore(panel, menuList);
+
+    document.getElementById('saveDailyMenu').onclick = saveDailyMenu;
+    document.getElementById('removeDailyPhoto').onclick = removeDailyPhoto;
+    document.getElementById('dailyPhoto').addEventListener('change', e => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const preview = document.getElementById('dailyPreview');
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = 'block';
+      document.getElementById('dailyNoPhoto').style.display = 'none';
+    });
+  }
+
+  function dailyPublicUrl(cacheBust = true) {
+    const { data } = db.storage.from(DAILY_BUCKET).getPublicUrl(DAILY_IMAGE_PATH);
+    return data.publicUrl + (cacheBust ? `?v=${Date.now()}` : '');
+  }
+
+  async function loadDailyMenuEditor() {
+    ensureDailyMenuPanel();
+    const title = document.getElementById('dailyTitle');
+    if (!title) return;
+
+    const { data, error } = await db.from('menu_items').select('*').eq('id', DAILY_MENU_ID).single();
+    const msg = document.getElementById('dailyMenuMsg');
+    if (error) {
+      msg.className = 'error';
+      msg.textContent = error.message;
+      return;
+    }
+
+    title.value = data.name || '';
+    document.getElementById('dailyDescription').value = data.description || '';
+    document.getElementById('dailyPrice').value = Number(data.price).toFixed(2);
+
+    const preview = document.getElementById('dailyPreview');
+    const noPhoto = document.getElementById('dailyNoPhoto');
+    preview.onload = () => { preview.style.display = 'block'; noPhoto.style.display = 'none'; };
+    preview.onerror = () => { preview.style.display = 'none'; noPhoto.style.display = 'block'; };
+    preview.src = dailyPublicUrl();
+  }
+
+  async function imageToWebp(file) {
+    const bitmap = await createImageBitmap(file);
+    const maxWidth = 1600;
+    const maxHeight = 1200;
+    const scale = Math.min(1, maxWidth / bitmap.width, maxHeight / bitmap.height);
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close?.();
+    return await new Promise((resolve, reject) => {
+      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Impossible de préparer la photo.')), 'image/webp', 0.86);
+    });
+  }
+
+  async function saveDailyMenu() {
+    const button = document.getElementById('saveDailyMenu');
+    const msg = document.getElementById('dailyMenuMsg');
+    const original = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Enregistrement…';
+    msg.className = 'small';
+    msg.textContent = '';
+
+    try {
+      const name = document.getElementById('dailyTitle').value.trim();
+      const description = document.getElementById('dailyDescription').value.trim();
+      const price = Number(document.getElementById('dailyPrice').value);
+      if (!name || !Number.isFinite(price) || price < 0) throw new Error('Titre ou prix invalide.');
+
+      const { error: updateError } = await db.from('menu_items').update({
+        name,
+        description,
+        price,
+        is_available: true,
+        updated_at: new Date().toISOString()
+      }).eq('id', DAILY_MENU_ID);
+      if (updateError) throw updateError;
+
+      const file = document.getElementById('dailyPhoto').files?.[0];
+      if (file) {
+        if (file.size > 12 * 1024 * 1024) throw new Error('La photo est trop grande. Maximum 12 Mo avant compression.');
+        const webp = await imageToWebp(file);
+        const { error: uploadError } = await db.storage.from(DAILY_BUCKET).upload(DAILY_IMAGE_PATH, webp, {
+          contentType: 'image/webp',
+          upsert: true,
+          cacheControl: '60'
+        });
+        if (uploadError) throw uploadError;
+        document.getElementById('dailyPhoto').value = '';
+      }
+
+      msg.className = 'ok';
+      msg.textContent = 'Menu du jour enregistré ✅';
+      await loadDailyMenuEditor();
+      await loadMenu();
+    } catch (error) {
+      msg.className = 'error';
+      msg.textContent = error?.message || String(error);
+    } finally {
+      button.disabled = false;
+      button.textContent = original;
+    }
+  }
+
+  async function removeDailyPhoto() {
+    if (!confirm('Supprimer la photo du menu du jour ?')) return;
+    const msg = document.getElementById('dailyMenuMsg');
+    const { error } = await db.storage.from(DAILY_BUCKET).remove([DAILY_IMAGE_PATH]);
+    if (error) {
+      msg.className = 'error';
+      msg.textContent = error.message;
+      return;
+    }
+    msg.className = 'ok';
+    msg.textContent = 'Photo supprimée ✅';
+    const preview = document.getElementById('dailyPreview');
+    preview.style.display = 'none';
+    document.getElementById('dailyNoPhoto').style.display = 'block';
+  }
+
   const target = document.getElementById('menuList');
   if (target) {
     new MutationObserver(repairDeleteButtons).observe(target, { childList: true, subtree: true });
@@ -85,4 +245,11 @@
   }
 
   wireHoursSave();
+  ensureDailyMenuPanel();
+
+  document.querySelector('[data-tab="menu"]')?.addEventListener('click', () => setTimeout(loadDailyMenuEditor, 0));
+  setTimeout(async () => {
+    const { data: { session } } = await db.auth.getSession();
+    if (session) loadDailyMenuEditor();
+  }, 700);
 })();
