@@ -69,6 +69,13 @@ jobs:
               html = html.replace('</body>', f'{admin_tag}\n</body>')
           else:
               html = re.sub(r'<script src="\./admin-fix\.js(?:\?v=[^"]*)?"></script>', admin_tag, html)
+
+          order_tag = '<script src="./admin-order.js?v=20260917-1"></script>'
+          if 'admin-order.js' not in html:
+              html = html.replace('</body>', f'{order_tag}\n</body>')
+          else:
+              html = re.sub(r'<script src="\./admin-order\.js(?:\?v=[^"]*)?"></script>', order_tag, html)
+
           admin.write_text(html, encoding='utf-8')
           PY
 
